@@ -17,7 +17,7 @@ import logging
 logger = logging.getLogger("django.request")
 
 # def index(request):
-    # login_url = "https://login.sogou-inc.com/?appid=1544&sso_redirect=http://selftesting.web.sjs.ted/&targetUrl="
+    # login_url = "https://login##.sogou##-inc.com/?appid##=1544&sso_redirect###=http://###selftesting.web.sjs.ted/&targetUrl="
     # ptoken = ""
     # try:
         # ptoken = request.GET['ptoken']
@@ -69,7 +69,7 @@ def index(request):
 
 '''
 def add(request):
-    # login_url = "https://login.sogou-inc.com/?appid=1544&sso_redirect=http://selftest.web.sjs.ted/&targetUrl="
+    # login_url = "https://login##.sogou##-inc.com/?appid##=1544&sso_redirect###=http://###selftesting.web.sjs.ted/&targetUrl="
     # try:
         # user = request.COOKIES['uid']
     # except:
@@ -430,7 +430,7 @@ def set_cancel(request):
     return
 
 def logout(request):
-    response = HttpResponseRedirect('https://login.sogou-inc.com/logout.jsp?appid=1544&sso_redirect=http://selftesting.web.sjs.ted&targetUrl=')
+    response = HttpResponseRedirect(login_url = "https://login##.sogou##-inc.com/?appid##=1544&sso_redirect###=http://###selftesting.web.sjs.ted/&targetUrl=")
     if ('uid' in request.COOKIES):
         response.delete_cookie("uid")
     return response
