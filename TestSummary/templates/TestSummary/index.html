@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SelfTesting</title>
+
+    <!-- Bootstrap -->
+    <link href="http://10.134.104.40/django_statics/AdminLTE/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css"> -->
+  <link rel="stylesheet" href="static/css/amazeui.min.css">
+  <link rel="stylesheet" href="static/css/app.css">
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/i18n/defaults-*.min.js"></script> -->
+    <!-- <link href="static/css/justified-nav.css" rel="stylesheet"> -->
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!-- <style type="text/css">.form-group1,.form-group2 {float: left;}.clearfix{clear:both}</style> -->
+  </head>
+  <body>
+<a href="http://selftesting.web.sjs.ted">&lt;&lt;&nbsp;back to homepage</a>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="http://10.134.104.40/django_statics/AdminLTE/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="static/js/amazeui.min.js"></script>
+
+    {% if uid %}
+        <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="/logout">Logout</a></div>
+    {% else %}
+        <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="https://login.sogou-inc.com/?appid=1544&sso_redirect=http://selftesting.web.sjs.ted/&targetUrl=">Login</a></div>
+    {% endif %}
+        <div class="container">
+    <h1>TestCache</h1>
+    <font size="2" color="red">注意1： cache测试目前支持并发度为2</font>
+    <br/>
+    <font size="2" color="red">注意2： svn信息请填写完整，包括需要的依赖分支，如web_base等</font>
+    <br/>
+    <font size="2" color="red">注意3： 性能对比结果目前关注QueryPreFill、QueryFill两级流水，波动不能超过2%</font>
+    <br/>
+      <!-- The justified navigation menu is meant for single line per list item.
+           Multiple lines will require custom code not provided by Bootstrap. -->
+<ul class="nav nav-tabs nav-justified">
+    <li class="active"><a href="add">Get Start</a></li>
+    <li><a href="task_queue">Task Queue</a></li>
+</ul>
+<form class="form-horizontal" role="form" action="/TestSummary/add" method="post">
+    {% csrf_token %}
+    {% for item in task_params%}
+    <div>
+        <label>{{item.label}}</label>
+        {{item}}
+    </div>
+    {% endfor %}
+    <!-- {{ task_params }} -->
+    <!-- <br> -->
+    <!-- <br> -->
+    <!-- <br> -->
+
+    <!-- <div class="col-sm-10"> -->
+    <!-- <label for="remarks">remarks<font color="red">*</font>:&nbsp;&nbsp;&nbsp;</label> -->
+    <!-- <textarea  class="form-control" name="remarks" id="remarks" rows="1" cols="80" placeholder="备注，如修改功能点 or 哪个测试任务"></textarea> -->
+    <!-- <br/> -->
+    <!-- </div> -->
+
+
+    <!-- <div class="col-sm-10"> -->
+    <!-- <label for="testsvn">test svn<font color="red">*</font>:&nbsp;&nbsp;&nbsp;</label> -->
+        <!-- <textarea  class="form-control" name="test_svn" id="test_svn" rows="10" cols="80" placeholder="test svn(dailybuild->job.ini format):" ></textarea> -->
+        <!-- <br> -->
+
+        <!-- <script> -->
+            <!-- $(function () { $("[data-toggle='tooltip']").tooltip(); }); -->
+        <!-- </script> -->
+
+    <!-- </div> -->
+    <!-- <div class="col-sm-10"> -->
+    <!-- <label for="testsvn">base svn<font color="red">*</font>:&nbsp;&nbsp;&nbsp;</label> -->
+       <!-- <input type="checkbox" name="base_env_update" value="1" />&nbsp; -->
+       <!-- <a class="tooltip-show" data-toggle="tooltip" title="如果本次代码和上一次执行的代码一致，默认不更新环境，选择此按钮会强制更新">Force Update</a>&nbsp;&nbsp;&nbsp; -->
+        <!-- <textarea  class="form-control" name="base_svn" id="base_svn" rows="10" cols="80" placeholder="base svn(dailybuild->job.ini format):" ></textarea> -->
+        <!-- <br> -->
+    
+        <!-- <script> -->
+            <!-- $(function () { $("[data-toggle='tooltip']").tooltip(); }); -->
+        <!-- </script> -->
+    
+ 
+        <!-- <label for="testsvn">newconf:&nbsp;&nbsp;&nbsp;&nbsp;effect only for test_env</label> -->
+        <!-- <div class="input-group col-sm-10" style="padding: 15px 15px 15px;"> -->
+            <!-- <span class="input-group-addon">IP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
+            <!-- <input type="text" name="newconfip" class="form-control" placeholder="10.134.99.71"> -->
+        <!-- </div> -->
+        <!-- <div class="input-group col-sm-10" style="padding: 15px 15px 15px;"> -->
+            <!-- <span class="input-group-addon">User:&nbsp;&nbsp;&nbsp;</span> -->
+            <!-- <input type="text" name="newconfuser" class="form-control" placeholder="root or guest"> -->
+        <!-- </div> -->
+        <!-- <div class="input-group col-sm-10" style="padding: 15px 15px 15px;"> -->
+            <!-- <span class="input-group-addon">PassW:</span> -->
+            <!-- <input type="text" name="newconfpassw" class="form-control" placeholder="****"> -->
+        <!-- </div> -->
+        <!-- <div class="input-group col-sm-10" style="padding: 15px 15px 15px;"> -->
+            <!-- <span class="input-group-addon">Path:&nbsp;&nbsp;&nbsp;</span> -->
+            <!-- <input type="text" name="newconfpath" class="form-control" placeholder="/search/odin/autotest/..."> -->
+        <!-- </div> -->
+        <!-- <label for="newconf"><font color="gray">如果有配置的修改，请填写</font></label><br> -->
+        <!-- <label for="newconf"><font color="gray">例如: 填写 /search/odin/feixiao/cache/WebCache/conf/, 平台会做如下操作:</font></label> -->
+        <!-- <label for="newconf"><font color="gray">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scp -r user@ip:/search/odin/feixiao/cache/WebCache/conf/*&nbsp;&nbsp;${TEST_ENV}/WebCache/conf/</font></label> -->
+        <!-- <label for="newconf"><font color="red">特别提醒： 不要将连接线上服务的配置放上去，</font></label> -->
+        <!-- <br> -->
+        <!-- <br> -->
+
+        <!-- <label for="testsvn">newdata:&nbsp;&nbsp;&nbsp;&nbsp;effect only for test_env</label> -->
+        <!-- <div class="input-group col-sm-10" style="padding: 15px 15px 15px;"> -->
+            <!-- <span class="input-group-addon">IP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> -->
+            <!-- <input type="text" name="newdataip" class="form-control" placeholder="10.134.99.71"> -->
+        <!-- </div> -->
+        <!-- <div class="input-group col-sm-10" style="padding: 15px 15px 15px;"> -->
+            <!-- <span class="input-group-addon">User:&nbsp;&nbsp;&nbsp;</span> -->
+            <!-- <input type="text" name="newdatauser" class="form-control" placeholder="root or guest"> -->
+        <!-- </div> -->
+        <!-- <div class="input-group col-sm-10" style="padding: 15px 15px 15px;"> -->
+            <!-- <span class="input-group-addon">PassW:</span> -->
+            <!-- <input type="text" name="newdatapassw" class="form-control" placeholder="****"> -->
+        <!-- </div> -->
+        <!-- <div class="input-group col-sm-10" style="padding: 15px 15px 15px;"> -->
+            <!-- <span class="input-group-addon">Path:&nbsp;&nbsp;&nbsp;</span> -->
+            <!-- <input type="text" name="newdatapath" class="form-control" placeholder="/search/odin/autotest/..."> -->
+        <!-- </div> -->
+        <!-- <label for="newdata"><font color="gray">如果有数据的修改，请填写</font></label><br> -->
+        <!-- <label for="newdata"><font color="gray">例如: 填写 /search/odin/feixiao/cache/WebCache/data/, 平台会做如下操作:</font></label> -->
+        <!-- <label for="newdata"><font size="2" color="gray">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;scp -r user@ip:/search/odin/feixiao/cache/WebCache/data/*&nbsp;&nbsp;${TEST_ENV}/WebCache/data/</font></label> -->
+
+        <!-- </br> -->
+        <!-- </br> -->
+        <!-- </br> -->
+
+        <!-- <label id="abc" for="checkbox">请选择要运行的脚本（请至少选择一项）：</label> -->
+        <!-- <div class="checkbox"> -->
+            <!-- <label><input class="checkbox" id="cccbox2" type="checkbox" name="performance" value="1">性能对比</label> -->
+        <!-- </div> -->
+        <!-- <div class="checkbox"> -->
+            <!-- <label><input class="checkbox" id="cccbox2" type="checkbox" name="dmfgl" value="1">代码覆盖率</label> -->
+        <!-- </div> -->
+        <!-- <div class="checkbox"> -->
+            <!-- <label><input class="checkbox" id="cccbox2" type="checkbox" name="pvscheck" value="1">pvs静态代码检查</label> -->
+        <!-- </div> -->
+
+
+        <script>
+            <!-- function CheckBoxChs(){ -->
+                <!-- var cbs = document.getElementsByClassName("checkbox"); -->
+                <!-- var checkNum = 0; -->
+                <!-- for (var i=0; i<cbs.length; i++) { -->
+                    <!-- if (cbs[i].checked){ -->
+                        <!-- checkNum++; -->
+                    <!-- } -->
+                <!-- } -->
+                <!-- alert("slect num= " + checkNum); -->
+                <!-- if (checkNum ==0){ -->
+                    <!-- alert("请至少选择一项") -->
+                    <!-- return false; -->
+                <!-- } -->
+            <!-- } -->
+        </script>
+
+
+        <br>
+        <br>
+        <br>
+        <br>
+
+
+
+    <div class="col-sm-offset-2" style="text-align:center">
+      <button type="submit" class="btn btn-primary" onclick="return CheckBoxChs()">开始</button>
+      <br>
+      <br>
+    </div>
+  </div>
+</form>
+</div>
+  </body>
+</html>
