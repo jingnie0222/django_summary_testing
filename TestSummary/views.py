@@ -20,7 +20,7 @@ from utils import mydifflib
 logger = logging.getLogger("django.request")
 
 # def index(request):
-    # login_url = "https://login##.sogou##-inc.com/?appid##=1544&sso_redirect###=http://###selftesting.web.sjs.ted/&targetUrl="
+    # login_url = "https://login.sogou-inc.com/?appid=1544&sso_redirect=http://selftesting.web.sjs.ted/&targetUrl="
     # ptoken = ""
     # try:
         # ptoken = request.GET['ptoken']
@@ -72,7 +72,7 @@ def index(request):
 
 '''
 def add(request):
-    # login_url = "https://login##.sogou##-inc.com/?appid##=1544&sso_redirect###=http://###selftesting.web.sjs.ted/&targetUrl="
+    # login_url = "https://login.sogou-inc.com/?appid=1544&sso_redirect=http://selftest.web.sjs.ted/&targetUrl="
     # try:
         # user = request.COOKIES['uid']
     # except:
@@ -330,21 +330,6 @@ def task_detail(request):
 
 def diff_detail(request):
 
-    replace_str = """<table class="diff" summary="Legends">
-                  <tr> <th colspan="2"> Legends </th> </tr>
-                  <tr> <td> <table border="" summary="Colors">
-                  <tr><th> Colors </th> </tr>
-                  <tr><td class="diff_add">&nbsp;Added&nbsp;</td></tr>
-                  <tr><td class="diff_chg">Changed</td> </tr>
-                  <tr><td class="diff_sub">Deleted</td> </tr>
-                  </table></td>
-                  <td> <table border="" summary="Links">
-                      <tr><th colspan="2"> Links </th> </tr>
-                      <tr><td>(f)irst change</td> </tr>
-                      <tr><td>(n)ext change</td> </tr>
-                      <tr><td>(t)op</td> </tr>
-                  </table></td> </tr>
-                  </table>"""
     if request.method == 'GET':
         task_id = int(request.GET['id'])
         data = SummaryDiff.objects.filter(task_id=task_id)
@@ -463,7 +448,7 @@ def set_cancel(request):
     return
 
 def logout(request):
-    response = HttpResponseRedirect(login_url = "https://login##.sogou##-inc.com/?appid##=1544&sso_redirect###=http://###selftesting.web.sjs.ted/&targetUrl=")
+    response = HttpResponseRedirect('https://login.sogou-inc.com/logout.jsp?appid=1544&sso_redirect=http://selftesting.web.sjs.ted&targetUrl=')
     if ('uid' in request.COOKIES):
         response.delete_cookie("uid")
     return response
