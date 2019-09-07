@@ -83,6 +83,10 @@ DATABASES = {
         'PASSWORD': 'passwd',
         'HOST': 'host',
         'PORT': '3306',
+        'OPTIONS': {
+            'autocommit': True,
+            'init_command':"SET sql_mode='STRICT_TRANS_TABLES'",
+        },
         
     }
 }

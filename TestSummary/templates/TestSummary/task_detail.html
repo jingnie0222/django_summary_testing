@@ -53,7 +53,7 @@
         <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="https://login.sogou-inc.com/?appid=1544&sso_redirect=http://selftesting.web.sjs.ted/&targetUrl=">Login</a></div>
     {% endif %}
 <br>
-<a href="/testcache/task_queue">&lt;&lt;&nbsp;back to task queue</a>
+<a href="/TestSummary/task_queue">&lt;&lt;&nbsp;back to task queue</a>
 <br>
 <table class="table">
 <thead>
@@ -223,6 +223,22 @@ function get(){
                 <td>{% for line in base_cost %}{{ line }}{% if not forloop.last %}<br>{% endif %}{% endfor %}</td>
             </tr>
         </tbody>
+        </table>
+        
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Summary Diff 对比</th>
+                </tr>
+            </thead>
+            <tbody>
+                <td>
+                    <label>diff结果个数:&nbsp;&nbsp;</label>{{ diff_res_num }}
+                    </br>
+                    <label>diff详情页:&nbsp;&nbsp;</label>
+                    <a href="/TestSummary/diff_detail?id={{ task_detail.task_id }}" target="_blank">diff详情页</a>                       
+                </td>
+            </tbody>
         </table>
 
 

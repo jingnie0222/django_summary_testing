@@ -6,6 +6,7 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from TestSummary.models import TestSummary
+from TestSummary.models import SummaryDiff
 from .forms import summary_form
 
 
@@ -13,6 +14,8 @@ import time
 #import MySQLdb
 import pymysql
 import logging
+from utils import mydifflib
+
 
 logger = logging.getLogger("django.request")
 
@@ -274,8 +277,7 @@ def task_queue(request):
     
     return render(request, 'TestSummary/task_queue.html', {'task_list': task_list_t})
     
-
-
+    
 
 def task_detail(request):
     task_id = int(request.GET['id'])
@@ -311,23 +313,54 @@ def task_detail(request):
         test_item += "performance "
         item_performance = 1
 
-
     test_item_mark = {'item_pvscheck': item_pvscheck, 'item_dmfgl': item_dmfgl, 'item_performance': item_performance}
     print ("test_item_mark: ", test_item_mark)
-
 
     try:
         uid = request.COOKIES['uid']
     except:
         uid = ''
     
-    
-
-#    task_detail = {'create_time': c_time, 'start_time': s_time, 'status': data.status, 'user': data.user, 'task_id': str(task_id), 'runningIP': data.runningIP, 'testitem': test_item, 'testsvn': data.testsvn.split('\n'), 'onlinesvn': data.basesvn.split('\n'), 'newconfip': data.newconfip, 'newconfuser': data.newconfuser, 'newconfpassw': data.newconfpassw, 'newconfpath': data.newconfpath, 'newdataip': data.newdataip, 'newdatauser': data.newdatauser, 'newdatapassw': data.newdatapassw, 'newdatapath': data.newdatapath, 'press_time':data.press_time, 'press_qps':data.press_qps, 'remarks': data.remarks}
     task_detail = {'create_time': c_time, 'start_time': s_time, 'status': data.status, 'user': data.user, 'task_id': str(task_id), 'runningIP': data.runningIP, 'testitem': test_item, 'testsvn': data.testsvn.split('\n'), 'onlinesvn': data.basesvn.split('\n'), 'newconfip': data.newconfip, 'newconfuser': data.newconfuser, 'newconfpassw': data.newconfpassw, 'newconfpath': data.newconfpath, 'newdataip': data.newdataip, 'newdatauser': data.newdatauser, 'newdatapassw': data.newdatapassw, 'newdatapath': data.newdatapath, 'remarks': data.remarks}
     
-    return render(request, 'TestSummary/task_detail.html', {'task_detail': task_detail, 'test_item_mark': test_item_mark, 'errlog': errlog_list, 'test_cost': 'test_cost', 'base_cost': 'base_cost', 'result_dmfgl': 'gcov', 'pvscheck_block_num': 'cppcheck', 'pvscheck_result_link': 'link','uid': uid})
+    diff_res_num = SummaryDiff.objects.filter(task_id=task_id).count()
+    
+    return render(request, 'TestSummary/task_detail.html', {'task_detail': task_detail, 'test_item_mark': test_item_mark, 'errlog': errlog_list, 'test_cost': data.performance_test.split('\n'), 'base_cost': data.performance_base.split('\n'), 'result_dmfgl': 'gcov', 'diff_res_num': diff_res_num, 'pvscheck_result_link': 'link','uid': uid})
 
+
+def diff_detail(request):
+
+    replace_str = """<table class="diff" summary="Legends">
+                  <tr> <th colspan="2"> Legends </th> </tr>
+                  <tr> <td> <table border="" summary="Colors">
+                  <tr><th> Colors </th> </tr>
+                  <tr><td class="diff_add">&nbsp;Added&nbsp;</td></tr>
+                  <tr><td class="diff_chg">Changed</td> </tr>
+                  <tr><td class="diff_sub">Deleted</td> </tr>
+                  </table></td>
+                  <td> <table border="" summary="Links">
+                      <tr><th colspan="2"> Links </th> </tr>
+                      <tr><td>(f)irst change</td> </tr>
+                      <tr><td>(n)ext change</td> </tr>
+                      <tr><td>(t)op</td> </tr>
+                  </table></td> </tr>
+                  </table>"""
+    if request.method == 'GET':
+        task_id = int(request.GET['id'])
+        data = SummaryDiff.objects.filter(task_id=task_id)
+        
+        diff = mydifflib.HtmlDiff(wrapcolumn=100)
+        diff_result = []
+        for el in data:
+            diff_data = diff.make_file(
+                            el.base_res.splitlines(keepends=True),
+                            el.test_res.splitlines(keepends=True)
+                            ).replace('nowrap="nowrap"', '')
+
+            diff_result.append(diff_data)
+        
+
+        return render(request, 'TestSummary/diff_detail.html', {'li':diff_result})
 
 
 
@@ -424,7 +457,7 @@ def re_add(request):
 def set_cancel(request):
     mission_id = int(request.GET['id'])
     print ("mission_id: ", mission_id)
-    item = testcache.objects.get(id=mission_id)
+    item = testcache.objects.filter(id=mission_id)
     item.status = 6
     item.save()
     return
