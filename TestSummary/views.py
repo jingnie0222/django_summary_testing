@@ -325,7 +325,7 @@ def task_detail(request):
     
     diff_res_num = SummaryDiff.objects.filter(task_id=task_id).count()
     
-    return render(request, 'TestSummary/task_detail.html', {'task_detail': task_detail, 'test_item_mark': test_item_mark, 'errlog': errlog_list, 'test_cost': data.performance_test.split('\n'), 'base_cost': data.performance_base.split('\n'), 'result_dmfgl': 'gcov', 'diff_res_num': diff_res_num, 'pvscheck_result_link': 'link','uid': uid})
+    return render(request, 'TestSummary/task_detail.html', {'task_detail': task_detail, 'test_item_mark': test_item_mark, 'errlog': errlog_list, 'test_cost': data.performance_test.split('\n'), 'base_cost': data.performance_base.split('\n'), 'result_gcov': data.code_gcov_result, 'diff_res_num': diff_res_num, 'pvscheck_result_link': 'link','uid': uid})
 
 
 def diff_detail(request):
