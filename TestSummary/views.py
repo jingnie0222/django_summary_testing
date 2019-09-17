@@ -442,10 +442,10 @@ def re_add(request):
 def set_cancel(request):
     mission_id = int(request.GET['id'])
     print ("mission_id: ", mission_id)
-    item = testcache.objects.filter(id=mission_id)
+    item = TestSummary.objects.get(id=mission_id)
     item.status = 6
     item.save()
-    return
+    return HttpResponse("")
 
 def logout(request):
     response = HttpResponseRedirect('https://login.sogou-inc.com/logout.jsp?appid=1544&sso_redirect=http://selftesting.web.sjs.ted&targetUrl=')

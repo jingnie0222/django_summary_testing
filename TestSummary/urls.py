@@ -13,6 +13,7 @@ urlpatterns = [
     re_path(r'^task_queue$', views.task_queue),
     re_path(r'^task_detail$', views.task_detail),
     re_path(r'^diff_detail$', views.diff_detail),
+    re_path(r'^set_cancel$', views.set_cancel)
     # url(r'^testcache/task_detail$', TestCache_views.task_detail, name='testcache_task_detail'),
     # url(r'^testcache/set_cancel$', TestCache_views.set_cancel, name='testcache_set_cancel'),
     # url(r'^testcache/re_add$', TestCache_views.re_add, name='testcache_re_add'),
