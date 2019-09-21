@@ -206,6 +206,7 @@ function get(){
 </div>
 {% endifequal %}
 <div name="result" style="padding: 5px 10px 60px 60px">
+    {% ifequal test_item_mark.performance 1 %}
         <table class="table table-hover">
         <thead>
             <tr>
@@ -225,7 +226,9 @@ function get(){
             </tr>
         </tbody>
         </table>
-        
+    {% endifequal %}
+    
+    {% ifequal test_item_mark.difftest 1 %}    
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -236,13 +239,15 @@ function get(){
                 <td>
                     <label>diff结果个数:&nbsp;&nbsp;</label>{{ diff_res_num }}
                     </br>
-                    <label>diff详情页:&nbsp;&nbsp;</label>
-                    <a href="/TestSummary/diff_detail?id={{ task_detail.task_id }}" target="_blank">diff详情页</a>                       
+                    <label>diff详情页:&nbsp;&nbsp;</label>                    
+                    <a href="/TestSummary/diff_detail?id={{ task_detail.task_id }}" target="_blank">diff详情页</a>    
+                                         
                 </td>
             </tbody>
         </table>
+    {% endifequal %} 
 
-
+    {% ifequal test_item_mark.gcov 1 %}  
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -255,7 +260,9 @@ function get(){
                 </td>
             </tbody>
         </table>
-
+    {% endifequal %} 
+    
+    {% ifequal test_item_mark.cppcheck 1 %}  
         <table class="table table-hover">
             <thead>
                 <tr>
@@ -271,7 +278,7 @@ function get(){
                 </td>
             </tbody>
         </table>
-
+    {% endifequal %}
 
 </div>
 <div name="detail">
