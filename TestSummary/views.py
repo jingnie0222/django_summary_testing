@@ -269,16 +269,33 @@ def task_queue(request):
         page = int(request.GET['page'])
     except:
         page = int(1)
+        
     item_on_page = int(15)
     task_list_t =  TestSummary.objects.order_by('-id')
-    for t in task_list_t:
-        print(t)
     total = len(task_list_t)
+    total_page = int(total/item_on_page) + 1
     
-    return render(request, 'TestSummary/task_queue.html', {'task_list': task_list_t})
+    if total % item_on_page == 0:
+        total_page -= 1    
+    if page > total_page:
+        page = total_page
+    
+    begin = int((page-1) * item_on_page)
+    end = int(page * item_on_page)
+    if end > total:
+        end = int(total)
+    
+    task_list = []   
+    for t in task_list_t[begin:end]:
+        task_list.append(t)
+    
+    page_list = []
+    for i in range(int(total_page)):
+        page_list.append(i+1)    
+       
+    return render(request, 'TestSummary/task_queue.html', {'task_list': task_list, 'page_list': page_list, 'page': page})
     
     
-
 def task_detail(request):
     task_id = int(request.GET['id'])
     data = TestSummary.objects.get(id=task_id)
@@ -293,39 +310,26 @@ def task_detail(request):
     c_time = str(data.create_time)
     s_time = str(data.start_time)
 
-    testitem = data.testitem
-    test_item = ""
+    testitem = data.testitem[1:-1].replace("'", "").split(", ")
+    print(testitem)
 
-    item_pvscheck = 0
-    item_dmfgl = 0
-    item_performance = 0
-
-
-    if (int((int(testitem)/1000) % 10) == 1):
-        test_item = "pvscheck "
-        item_pvscheck = 1
-
-    if (int((int(testitem)/100) % 10) == 1):
-        test_item += "dmfgl "
-        item_dmfgl = 1
-
-    if (int((int(testitem)/10) % 10) == 1):
-        test_item += "performance "
-        item_performance = 1
-
-    test_item_mark = {'item_pvscheck': item_pvscheck, 'item_dmfgl': item_dmfgl, 'item_performance': item_performance}
-    print ("test_item_mark: ", test_item_mark)
+    #用于在run again对话框中标识所选测试项
+    test_item_mark = {}
+    test_item_mark['performance'] = 1 if 'performance' in testitem  else 0
+    test_item_mark['gcov'] = 1 if 'gcov' in testitem  else 0
+    test_item_mark['difftest'] = 1 if 'difftest' in testitem  else 0
 
     try:
         uid = request.COOKIES['uid']
     except:
         uid = ''
     
-    task_detail = {'create_time': c_time, 'start_time': s_time, 'status': data.status, 'user': data.user, 'task_id': str(task_id), 'runningIP': data.runningIP, 'testitem': test_item, 'testsvn': data.testsvn.split('\n'), 'onlinesvn': data.basesvn.split('\n'), 'newconfip': data.newconfip, 'newconfuser': data.newconfuser, 'newconfpassw': data.newconfpassw, 'newconfpath': data.newconfpath, 'newdataip': data.newdataip, 'newdatauser': data.newdatauser, 'newdatapassw': data.newdatapassw, 'newdatapath': data.newdatapath, 'remarks': data.remarks}
+    task_detail = {'create_time': c_time, 'start_time': s_time, 'status': data.status, 'user': data.user, 'task_id': str(task_id), 'runningIP': data.runningIP, 'testitem': testitem, 'testsvn': data.testsvn.split('\n'), 'onlinesvn': data.basesvn.split('\n'), 'newconfip': data.newconfip, 'newconfuser': data.newconfuser, 'newconfpassw': data.newconfpassw, 'newconfpath': data.newconfpath, 'newdataip': data.newdataip, 'newdatauser': data.newdatauser, 'newdatapassw': data.newdatapassw, 'newdatapath': data.newdatapath, 'remarks': data.remarks}
     
     diff_res_num = SummaryDiff.objects.filter(task_id=task_id).count()
     
     return render(request, 'TestSummary/task_detail.html', {'task_detail': task_detail, 'test_item_mark': test_item_mark, 'errlog': errlog_list, 'test_cost': data.performance_test.split('\n'), 'base_cost': data.performance_base.split('\n'), 'result_gcov': data.code_gcov_result, 'diff_res_num': diff_res_num, 'pvscheck_result_link': 'link','uid': uid})
+
 
 
 def diff_detail(request):
@@ -350,92 +354,46 @@ def diff_detail(request):
 
 
 def re_add(request):
-    login_url = "https://login.sogou-inc.com/?appid=1544&sso_redirect=http://selftesting.web.sjs.ted&targetUrl="
-    try:
-        user = request.COOKIES['uid']
-    except:
-        return HttpResponseRedirect(login_url)
-    mission_id = int(request.POST['mission_id'])
+    # login_url = "https://login.sogou-inc.com/?appid=1544&sso_redirect=http://selftesting.web.sjs.ted&targetUrl="
+    # try:
+        # user = request.COOKIES['uid']
+    # except:
+        # return HttpResponseRedirect(login_url)
+    user = ""
+    testitem_lst = []
     
-    data = testcache.objects.get(id=mission_id) 
-#    testsvn = data.testsvn
-#    print testsvn
+    mission_id = int(request.POST['mission_id'])   
+    data = TestSummary.objects.get(id=mission_id) 
 
-    testitem = 0
-    print ("aaa")
 
     try:
-        pvscheck = str_dos2unix(request.POST['pvscheck'])
-        testitem += int(pvscheck)*1000
+        difftest = str_dos2unix(request.POST['difftest'])
+        if difftest == '1':
+            testitem_lst.append('difftest')
     except:
         pass
+        
     try:
-        dmfgl = str_dos2unix(request.POST['dmfgl'])
-        testitem += int(dmfgl)*100
+        gcov = str_dos2unix(request.POST['gcov'])
+        if gcov == '1':
+            testitem_lst.append('gcov')
     except:
         pass
+        
     try:
         performance = str_dos2unix(request.POST['performance'])
-        testitem += int(performance)*10
+        if performance == '1':
+            testitem_lst.append('performance')
     except:
         pass
 
     remarks = str_dos2unix_space(request.POST['remarks'])
+    
+    testitem = str(testitem_lst)
+    
+    data_re_add = TestSummary.objects.create(create_time=get_now_time(), user=user, testitem=testitem, testsvn=data.testsvn, basesvn=data.basesvn, newconfip=data.newconfip, newconfuser=data.newconfuser, newconfpassw=data.newconfpassw, newconfpath=data.newconfpath, newdataip=data.newdataip, newdatauser=data.newdatauser, newdatapassw=data.newdatapassw, newdatapath=data.newdatapath, remarks=remarks)
 
-
-    data_re_add = testcache.objects.create(create_time=get_now_time(), user=user, testitem=int(testitem), testsvn=data.testsvn, basesvn=data.basesvn, newconfip=data.newconfip, newconfuser=data.newconfuser, newconfpassw=data.newconfpassw, newconfpath=data.newconfpath, newdataip=data.newdataip, newdatauser=data.newdatauser, newdatapassw=data.newdatapassw, newdatapath=data.newdatapath, remarks=remarks)
-
-
-
-    task_id = data_re_add.id
-    print ('task_id: ', task_id)
-
-    database_host="datatest01.web.sjs.ted"
-    database_data="static_check_history"
-    database_user="root"
-    database_pass=""
-
-    svn_key = 'uYSlU9TFCCkk7mqxrmZi5TxKkiEZqjYPiZN2mhXe'
-    orxstr = stringxor('New$oGou4U!', svn_key)
-    print ("whatwhatwhat")
-    try:
-        if int(pvscheck) == 1:
-            print  ("herehere")
-            db = pymysql.connect(database_host,database_user,database_pass,database_data, charset="utf8")
-            cursor = db.cursor()
-
-
-            print  ("herehere2")
-            if int(dmfgl) == 0 and int(performance) == 0:
-                need_update_selftest = 1
-
-            else:
-                need_update_selftest = 0
-            
-
-            print  ("herehere3")
-            sql = "INSERT INTO pvs_checktask (module_name, baseline_code, test_code, yum_request, author, ostype, self_test_id, chk_username, chk_pwd_encrypt, need_update_selftest) VALUES('cache', '%s', '%s', ' ', '%s@sogou-inc.com', '0', '%s', 'qa_svnreader', '%s', %s)" %(data.basesvn, data.testsvn, user, task_id, orxstr, need_update_selftest)
-            logger.debug("pvs_sql: %s" %sql)
-            print ("pvs_sql: %s" %sql)
-
-
-            try:
-                cursor.execute(sql)
-                db.commit()
-            except:
-                db.rollback()
-                print
-                db.close()
-                return HttpResponse("Db Error<br><b>Maybe Chinese charactor</b><br>" + user +'<br>' + test_svn + '<br>' + base_svn + '<br>')
-    except:
-        pass
-
-
-
-
-
-    return HttpResponseRedirect('/testcache/task_queue')
-
+    return HttpResponseRedirect('/TestSummary/task_queue')
 
 
 

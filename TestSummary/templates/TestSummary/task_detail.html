@@ -83,7 +83,7 @@
         {% ifequal task_detail.status 5 %}<th><font color="orange">Canceled</font></th>{% endifequal %}
         {% ifequal task_detail.status 6 %}<th><font color="orange">Canceling</font></th>{% endifequal %}
         {% ifequal task_detail.status 7 %}<th><font color="green">PvsChecking</font></th>{% endifequal %}
-        <th>{{ task_detail.testitem }}</th>
+        <th>{% for item in task_detail.testitem %} {{ item }} {% endfor %}</th>
         <th>{{ task_detail.user }}</th>
         <th>{{ task_detail.remarks }}</th>
 {% ifequal task_detail.status 2 %}
@@ -132,6 +132,7 @@ function get(){
                 </button>
             </div>
         <form action="re_add" method="post">
+        {% csrf_token %}
             <div class="modal-body">
     <input type="text" readonly name="mission_id" width="4" value="{{task_detail.task_id}}"><br>
 <!--    <b>Test Item:</b>&nbsp; -->
@@ -139,13 +140,13 @@ function get(){
                             <b style="clear:both">Test Item:</b>&nbsp;
                          <div>
                             <div class="checkbox" style="float:left; margin-top: 10px;">
-                              <label><input class="checkbox" id="cccbox2" type="checkbox" {% ifequal test_item_mark.item_performance 1 %}checked{% endifequal %} name="performance" value="1">性能对比<label>
+                              <label><input class="checkbox" id="cccbox2" type="checkbox" {% ifequal test_item_mark.performance 1 %}checked{% endifequal %} name="performance" value="1">性能对比<label>
                             </div>
                             <div class="checkbox" style="float:left; margin-top: 10px;">
-                              <label><input class="checkbox" id="cccbox2" type="checkbox" {% ifequal test_item_mark.item_dmfgl 1 %}checked{% endifequal %} name="dmfgl" value="1">代码覆盖率<label>
+                              <label><input class="checkbox" id="cccbox2" type="checkbox" {% ifequal test_item_mark.gcov 1 %}checked{% endifequal %} name="gcov" value="1">代码覆盖率<label>
                             </div>
                             <div class="checkbox" style="float:left; margin-top: 10px;">
-                              <label><input class="checkbox" id="cccbox2" type="checkbox" {% ifequal test_item_mark.item_pvscheck 1 %}checked{% endifequal %} name="pvscheck" value="1">pvs静态代码检查</label>
+                              <label><input class="checkbox" id="cccbox2" type="checkbox" {% ifequal test_item_mark.difftest 1 %}checked{% endifequal %} name="difftest" value="1">DIFF对比</label>
                             </div>
                           </div>
                              <br/>

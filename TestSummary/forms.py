@@ -84,8 +84,9 @@ class summary_form(forms.Form):
         required = False,
         widget = forms.CheckboxSelectMultiple(), 
         choices = (
-            ('performance', '性能测试'),
-            ('gcov', '代码覆盖率'),
+            ('性能测试', 'performance'),
+            ('代码覆盖率', 'gcov'),
+            ('DIFF对比', 'difftest')
         ),
         label = 'test_item'
     )

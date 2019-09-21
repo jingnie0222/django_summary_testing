@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!-- <meta http-equiv="refresh" content="10"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TestCache</title>
+    <title>TestSummary</title>
 
     <!-- Bootstrap -->
     <link href="/static/css/bootstrap.min.css" rel="stylesheet">
@@ -32,12 +32,12 @@
         <div style="margin-right:20px;float: right;"><label>{{uid}}&nbsp;</label><a href="https://login.sogou-inc.com/?appid=1544&sso_redirect=http://selftesting.web.sjs.ted/&targetUrl=">Login</a></div>
     {% endif %}
         <div class="container">
-    <h1>TestCache</h1>
+    <h1>TestSummary</h1>
 
       <!-- The justified navigation menu is meant for single line per list item.
            Multiple lines will require custom code not provided by Bootstrap. -->
 <ul class="nav nav-tabs nav-justified">
-    <li><a href="/testcache">Get Start</a></li>
+    <li><a href="/TestSummary/add">Get Start</a></li>
     <li class="active"><a href="#">Task Queue</a></li>
 </ul>
 <br>
@@ -79,16 +79,16 @@
     {% endfor %}
 </tbody>
 <table>
-<!-- <ul class="pagination"> -->
-    <!-- {% ifequal page_list|length 1 %} -->
-    <!-- {% else %} -->
-    <!-- {% for i in page_list %} -->
-    <!-- {% ifequal i page %}<li class="active"><a>{{ i }}</a></li> -->
-    <!-- {% else %}<li><a href="/testcache/task_queue?page={{ i }}">{{ i }}</a></li> -->
-    <!-- {% endifequal %} -->
-    <!-- {% endfor %} -->
-    <!-- {% endifequal %} -->
-<!-- </ul> -->
+<ul class="pagination">
+    {% ifequal page_list|length 1 %}
+    {% else %}
+    {% for i in page_list %}
+    {% ifequal i page %}<li class="active"><a>{{ i }}</a></li>
+    {% else %}<li><a href="/TestSummary/task_queue?page={{ i }}">{{ i }}</a></li>
+    {% endifequal %}
+    {% endfor %}
+    {% endifequal %}
+</ul>
 </div>
 
   </body>
